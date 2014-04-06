@@ -34,9 +34,13 @@ angular.module('stacker', [])
       $scope.grid[$scope.activeBlock.row][$scope.activeBlock.cell].active = true
     }
 
-    $document.on("keydown click",function(event) {
-      if (event.keyCode == 32 || !event.keyCode) {
-        if ($scope.activeBlock.row > 0) {
+    $document.on("keydown", function(event) {
+      if (event.keyCode == 32) {
+
+        if ($scope.activeBlock.row != numRows - 1 && !$scope.grid[$scope.activeBlock.row+1][$scope.activeBlock.cell].active) {
+          alert("YOU LOSE!")
+          $interval.cancel($scope.gameLoop)
+        } else if ($scope.activeBlock.row > 0) {
           $scope.activeBlock.row--;
           decreaseSpeed()
         } else {
@@ -48,6 +52,7 @@ angular.module('stacker', [])
 
     decreaseSpeed = function() {
       $scope.speed *= 0.95
+      $scope.speed -= 2
     }
 
     $scope.$watch("speed", function(val) {
