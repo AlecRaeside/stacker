@@ -5,12 +5,15 @@
   <link rel="stylesheet" type="text/css" href="css/game.css">
 </head>
 <body>
- <div ng-controller="game" class="grid">
+
+<div ng-controller="game" class="grid">
+ <div style="color:white;font-size:24px;">{{activeBlock}}</div>
   <div ng-repeat="row in grid" class="row">
     <div ng-repeat="cell in row" ng-class="{'cell':true, 'active': cell.active}"></dov>
   </div>
- </div>
- <script src="js/angular.js"></script>
- <script src="js/stacker.js"></script>
+</div>
+
+<script src="js/angular.js"></script>
+<script src="js/stacker.js"></script>
 </body>
 </html>
