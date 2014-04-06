@@ -1,9 +1,22 @@
-.cell {
+* {
+  margin:0;
+  padding:0;
+  line-height: 1em;
+  box-sizing:border-box;
+}
 
-  height: 30px;
-  width: 30px;
+.grid {
+  line-height: 1;
+  margin:0;
+}
+
+.cell {
+  background: #fbfbfb;
+  height: 35px;
+  width: 35px;
   margin: 2px;
-  display:inline-block
+  display:inline-block;
+  vertical-align: top;
 }
 .cell.active {
   background: red;
