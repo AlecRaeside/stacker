@@ -6,7 +6,7 @@ angular.module('stacker', [])
     $scope.speed = 200
 
     $scope.grid = []
-    for (var i=0; i < numRows; i++) {
+    for (var i=0; i <= numRows; i++) {
       $scope.grid[i] = []
       for (var c = 0; c < numCellsPerRow; c++) {
         $scope.grid[i][c] = {active: false}
@@ -16,37 +16,53 @@ angular.module('stacker', [])
     $scope.activeBlock = {
       row: numRows - 1,
       cell: 0,
-      length: 1,
+      length: 3,
       direction: 1 //move right
     }
 
+    for (var c = $scope.activeBlock.cell; c < $scope.activeBlock.lenth; c++) {
+      $scope.grid[numRows-1][c].active = true
+    }
+
+
+    var row;
+    var direction = 1
     $scope.step = function() {
-      if ( $scope.activeBlock.direction == 1 && $scope.activeBlock.cell + $scope.activeBlock.length >= numCellsPerRow) {
-        $scope.activeBlock.direction = -1
+      $scope.activeBlock.cell += $scope.activeBlock.direction
+      if ( $scope.activeBlock.direction == 1 && ($scope.activeBlock.cell + $scope.activeBlock.length) >= numCellsPerRow) {
+        direction = -1
       } else if ( $scope.activeBlock.direction == -1 && $scope.activeBlock.cell  == 0) {
-        $scope.activeBlock.direction = 1
+        direction = 1
+      }
+      $scope.activeBlock.direction = direction
+
+      row = $scope.grid[$scope.activeBlock.row]
+      if (direction == 1) {
+        row[$scope.activeBlock.cell].active = false
+        row[$scope.activeBlock.cell+$scope.activeBlock.length].active = true
+      } else {
+        row[$scope.activeBlock.cell-1].active = true
+        row[$scope.activeBlock.cell+$scope.activeBlock.length-1].active = false
       }
 
-      $scope.grid[$scope.activeBlock.row][$scope.activeBlock.cell].active = false
+    }
 
-      $scope.activeBlock.cell += $scope.activeBlock.direction
-
-      $scope.grid[$scope.activeBlock.row][$scope.activeBlock.cell].active = true
+    var stopBlock = function() {
+      if ($scope.activeBlock.row != numRows - 1 && !$scope.grid[$scope.activeBlock.row+1][$scope.activeBlock.cell].active) {
+        alert("YOU LOSE!")
+        $interval.cancel($scope.gameLoop)
+      } else if ($scope.activeBlock.row > 0) {
+        $scope.activeBlock.row--;
+        decreaseSpeed()
+      } else {
+        alert("YOU WIN!")
+        $interval.cancel($scope.gameLoop)
+      }
     }
 
     $document.on("keydown", function(event) {
       if (event.keyCode == 32) {
-
-        if ($scope.activeBlock.row != numRows - 1 && !$scope.grid[$scope.activeBlock.row+1][$scope.activeBlock.cell].active) {
-          alert("YOU LOSE!")
-          $interval.cancel($scope.gameLoop)
-        } else if ($scope.activeBlock.row > 0) {
-          $scope.activeBlock.row--;
-          decreaseSpeed()
-        } else {
-          alert("YOU WIN!")
-          $interval.cancel($scope.gameLoop)
-        }
+        stopBlock();
       }
     })
 
