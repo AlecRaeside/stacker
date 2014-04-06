@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html ng-app="stacker">
+<head>
+  <title>Stacker</title>
+  <link rel="stylesheet" type="text/css" href="css/game.css">
+</head>
+<body>
+ <div ng-controller="game">
+  <div ng-repeat="row in grid">
+    <span ng-repeat="cell in row" ng-class="{'cell':true, 'active':cell.active}"></span>
+  </div>
+ </div>
+ <script src="js/angular.js"></script>
+ <script src="js/stacker.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.cell {
+
+  height: 30px;
+  width: 30px;
+  margin: 2px;
+  display:inline-block
+}
+.cell.active {
+  background: red;
+}
