@@ -117,6 +117,7 @@ angular.module('stacker', [])
         stopBlock();
       }
     })
+    $document.on("touchstart", stopBlock)
 
     decreaseSpeed = function() {
       $scope.speed++
