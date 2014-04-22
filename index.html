@@ -7,10 +7,13 @@
 <body>
 
 <div ng-controller="game" class="grid">
- <div style="color:white;font-size:24px;">{{activeBlock}}</div>
   <div ng-repeat="row in grid" class="row">
-    <div ng-repeat="cell in row" ng-class="{'cell':true, 'active': cell.active}"></dov>
+    <div ng-repeat="cell in row" ng-class="{'cell':true, 'active': cell.active}"></div>
   </div>
+  <p>Stack the blocks, press space or touch the screen to play.</p>
+  <p>Score: <strong>{{score}}</strong></p>
+  <p>Best Score: <strong>{{bestscore}}</strong> (lower is better)</p>
+
 </div>
 
 <script src="js/angular.js"></script>

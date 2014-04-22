@@ -1,35 +1,66 @@
 angular.module('stacker', [])
   .controller('game', ["$scope", "$interval", "$document", function($scope, $interval, $document) {
 
-    var numRows = 12;
+    var numRows = 9;
     var numCellsPerRow = 8;
     var LEFT = -1
     var RIGHT = 1
-    $scope.speed = 200
-
-    $scope.grid = []
-    for (var i=0; i <= numRows; i++) {
-      $scope.grid[i] = []
-      for (var c = 0; c < numCellsPerRow; c++) {
-        $scope.grid[i][c] = {active: false}
-      }
-    }
-
-    $scope.activeBlock = {
-      row: numRows - 1,
-      cell: 0,
-      length: 3,
-      direction: 1 //move right
-    }
-    var initialiseRow = function () {
-      for (var c = $scope.activeBlock.cell; c < $scope.activeBlock.length + $scope.activeBlock.cell; c++) {
-        $scope.grid[$scope.activeBlock.row][c].active = true
-      }
-    }
-
+    var speed = 3
+    var level = 0
     var row;
     var direction = 1
+
+    $scope.initGame = function() {
+      $scope.speed = speed
+      $scope.score = 0
+      $scope.grid = []
+      for (var i=0; i < numRows; i++) {
+        $scope.grid[i] = []
+        for (var c = 0; c < numCellsPerRow; c++) {
+          $scope.grid[i][c] = {active: false}
+        }
+      }
+
+      $scope.activeBlock = {
+        row: numRows - 1,
+        cell: 0,
+        length: 3,
+        direction: 1 //move right
+      }
+      level = 0
+      direction = 1
+       $scope.bestscore = 0
+      if (!!localStorage.bestscore) {
+        $scope.bestscore = parseInt(localStorage.bestscore, 10)
+      }
+     }
+
+    $scope.initGame()
+
+    $scope.initialiseRow = function() {
+      var newActiveCell = $scope.activeBlock.cell
+      for (var c = $scope.activeBlock.cell; c < $scope.activeBlock.length + $scope.activeBlock.cell; c++) {
+        if ($scope.activeBlock.row == numRows - 1 || $scope.grid[$scope.activeBlock.row + 1][c].active) {
+          $scope.grid[$scope.activeBlock.row][c].active = true
+          $scope.grid[$scope.activeBlock.row-1][c].active = true
+        } else {
+          newActiveCell++
+          $scope.activeBlock.length--
+          $scope.grid[$scope.activeBlock.row][c].active = false
+        }
+      }
+      if ($scope.activeBlock.length > 1 && $scope.activeBlock.row == 4 || $scope.activeBlock.row == 8) {
+        $scope.activeBlock.length--
+      }
+      $scope.activeBlock.cell = newActiveCell
+      if ($scope.activeBlock.length == 0) {
+        return "lose"
+      }
+    }
+
+
     $scope.step = function() {
+      $scope.score++;
 
       if ( $scope.activeBlock.direction == 1 && ($scope.activeBlock.cell + $scope.activeBlock.length) >= numCellsPerRow) {
         direction = LEFT
@@ -51,20 +82,34 @@ angular.module('stacker', [])
 
 
     var stopBlock = function() {
-      if ($scope.activeBlock.row != numRows - 1 && !$scope.grid[$scope.activeBlock.row+1][$scope.activeBlock.cell].active) {
-        alert("YOU LOSE!")
-        $interval.cancel($scope.gameLoop)
-      } else if ($scope.activeBlock.row > 0) {
-        $scope.activeBlock.row--;
-        if ($scope.activeBlock.row % Math.floor(numRows/3) == 0 && $scope.activeBlock.length > 1) {
-          $scope.activeBlock.length--;
+      if ($scope.activeBlock.row >= 0) {
+        var result;
+        if ($scope.activeBlock.row > 0) {
+          result = $scope.initialiseRow()
+        } else if ($scope.grid[$scope.activeBlock.row+1][$scope.activeBlock.cell].active) {
+          result = "win"
+        } else {
+          result = "lose"
         }
-        initialiseRow()
-        decreaseSpeed()
-      } else {
-        alert("YOU WIN!")
-        $interval.cancel($scope.gameLoop)
+        if (result == "win" && $scope.activeBlock.row == 0) {
+          if (!localStorage.bestscore || $scope.score < $scope.bestscore) {
+            localStorage.bestscore = $scope.score
+          }
+          alert("YOU WIN!")
+          gameFinished()
+        } else if (result == "lose") {
+          alert("YOU LOSE!")
+          gameFinished()
+        } else {
+          $scope.activeBlock.row--;
+          decreaseSpeed()
+        }
       }
+    }
+
+    var gameFinished = function() {
+      $interval.cancel($scope.gameLoop)
+      $scope.initGame()
     }
 
     $document.on("keydown", function(event) {
@@ -74,16 +119,12 @@ angular.module('stacker', [])
     })
 
     decreaseSpeed = function() {
-      $scope.speed *= 0.95
-      $scope.speed -= 2
+      $scope.speed++
     }
-    initialiseRow()
     $scope.$watch("speed", function(val) {
       if (!!$scope.gameLoop) {
         $interval.cancel($scope.gameLoop)
       }
-      $scope.gameLoop = $interval($scope.step, parseInt($scope.speed, 10));
+      $scope.gameLoop = $interval($scope.step, parseInt(1000/$scope.speed, 10));
     })
-
-
   }])

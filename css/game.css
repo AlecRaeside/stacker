@@ -3,6 +3,7 @@
   padding:0;
   line-height: 1em;
   box-sizing:border-box;
+  font-family:sans-serif;
 }
 
 body {
@@ -24,4 +25,12 @@ body {
 .cell.active {
   background: #01FFFF;
   box-shadow: inset 0 0 10px #02f, 0 0 5px 5px rgba(30, 60, 255, 0.4);
+}
+
+p {
+  color: #ddd;
+  margin: 10px;
+}
+strong {
+  color: #fff;
 }
