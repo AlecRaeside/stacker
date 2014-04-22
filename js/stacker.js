@@ -1,11 +1,11 @@
 angular.module('stacker', [])
   .controller('game', ["$scope", "$interval", "$document", function($scope, $interval, $document) {
 
-    var numRows = 9;
+    var numRows = 12;
     var numCellsPerRow = 8;
     var LEFT = -1
     var RIGHT = 1
-    var speed = 3
+    var speed = 4
     var level = 0
     var row;
     var direction = 1
